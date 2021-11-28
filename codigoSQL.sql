@@ -36,11 +36,11 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `schema_movies`.`Context` (
   `IDContext` INT NOT NULL AUTO_INCREMENT,
   `context_name` VARCHAR(200) NULL DEFAULT NULL,
-  `Movie_ID Movie` INT NOT NULL,
+  `Movie_IDMovie` INT NOT NULL,
   PRIMARY KEY (`IDContext`),
-  INDEX `fk_Context_Movie1_idx` (`Movie_ID Movie` ASC) VISIBLE,
+  INDEX `fk_Context_Movie1_idx` (`Movie_IDMovie` ASC) VISIBLE,
   CONSTRAINT `fk_Context_Movie1`
-    FOREIGN KEY (`Movie_ID Movie`)
+    FOREIGN KEY (`Movie_IDMovie`)
     REFERENCES `schema_movies`.`Movie` (`IDMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -54,19 +54,19 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `schema_movies`.`Phrases` (
   `IDPhrases` INT NOT NULL AUTO_INCREMENT,
-  `phrases_name` VARCHAR(200) NULL DEFAULT NULL,
-  `Context_ID Context` INT NOT NULL,
-  `Movie_ID Movie` INT NOT NULL,
+  `phrases_name` VARCHAR(1000) NULL DEFAULT NULL,
+  `Context_IDContext` INT NOT NULL,
+  `Movie_IDMovie` INT NOT NULL,
   PRIMARY KEY (`IDPhrases`),
-  INDEX `fk_Phrases_Context_idx` (`Context_ID Context` ASC) VISIBLE,
-  INDEX `fk_Phrases_Movie1_idx` (`Movie_ID Movie` ASC) VISIBLE,
+  INDEX `fk_Phrases_Context_idx` (`Context_IDContext` ASC) VISIBLE,
+  INDEX `fk_Phrases_Movie1_idx` (`Movie_IDMovie` ASC) VISIBLE,
   CONSTRAINT `fk_Phrases_Context`
-    FOREIGN KEY (`Context_ID Context`)
+    FOREIGN KEY (`Context_IDContext`)
     REFERENCES `schema_movies`.`Context` (`IDContext`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Phrases_Movie1`
-    FOREIGN KEY (`Movie_ID Movie`)
+    FOREIGN KEY (`Movie_IDMovie`)
     REFERENCES `schema_movies`.`Movie` (`IDMovie`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

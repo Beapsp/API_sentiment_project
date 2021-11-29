@@ -2,6 +2,11 @@ from config.configuration import engine
 import pandas as pd
 from textblob import TextBlob
 from googletrans import Translator
+import re
+import spacy
+import nltk
+nltk.downloader.download('vader_lexicon')
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 
 
@@ -63,35 +68,62 @@ def completo(todo):
 
 def traduccion(lang, movie):
     trans = Translator()
-    if lang == "en":
+    if lang == "es":
         return lasfrases(movie)
-    elif lang == "es":
+    elif lang == "en":
         notraduci = lasfrases(movie)
-        traducido = trans.translate(lasfrases(movie), dest="en").text
+        traducido = trans.translate(lasfrases(movie), dest="es").text
         return f" Traducción: {traducido}"
     else:
         return lasfrases(movie)
 
 
 
-def nuevafrase(movie, context, phrases):
+def nuevafrase(phrases, context, movie):
 
     engine.execute(f"""
-    INSERT INTO phrases (Movie_IDMovie, Context_IDContext, phrases_name)
-    VALUES ({movie}, '{context}', '{phrases}');
+    INSERT INTO phrases (phrases_name, Context_IDContext, Movie_IDMovie)
+    VALUES ('{phrases}', {context}, {movie});
     """)
     
-    return f"Se ha introducido correctamente: {movie} {context} {phrases}"
+    return f"Se ha introducido correctamente: {phrases} {context} {movie}"
 
+
+def nuevapeli(movie):
+
+    engine.execute(f"""
+    INSERT INTO movie(movie_name)
+    VALUES ('{movie}');
+    """)
+    return f"Se ha introducido correctamente: {movie}"
+
+
+def analisis_sentimientos(movie):
+    query = pd.read_sql_query(f"""
+    SELECT phrases.phrases_name
+    FROM phrases
+    INNER JOIN movie
+    ON movie.IDMovie=phrases.Movie_IDMovie
+    WHERE movie_name = '{movie}'; 
+    """,engine) #quiero un df, por eso retiro el .json y el record
+    return query
     
 
-    #def random_aut_gen_2(lang, genero, autor):
-    trans = Translator()
-    if lang == "en":
-        return random_aut_gen(genero, autor)
-    elif lang == "es":
-        sintraducir = random_aut_gen(genero, autor)
-        traducido = trans.translate(random_aut_gen(genero,autor), dest="es").text
-        return f"Traducción: {traducido}"
-    else:
-        return random_aut_gen(genero, autor)
+def tokenizer(phrases):
+    nlp = spacy.load("en_core_web_sm")
+    tokens = nlp(phrases)
+    filtradas = []
+    for token in tokens: #saco las palabras importantes para el análisis de sentimientos
+        if not token.is_stop:
+            lemma = token.lemma_.lower().strip()
+            if re.search('^[a-zA-Z]+$',lemma): # Esto me quita las interrogaciones
+                filtradas.append(lemma)
+    return " ".join(filtradas)
+
+
+def sentiment(phrases):
+    sia = SentimentIntensityAnalyzer()
+    polaridad = sia.polarity_scores(phrases)
+    pol = polaridad["compound"]
+    return pol
+

@@ -34,14 +34,14 @@ def contexto(name):
     contexto_peli = sqt.loscontextos(name)
     return jsonify(contexto_peli)
 
-@app.route("/completo/<movie>") #endpoints para conseguir los contextos de películas concretas que yo le pida
+@app.route("/completo/<movie>") #endpoints para conseguir las frases y los contextos de películas concretas que yo le pida
 def complet(movie):
     todo_peli = sqt.completo(movie)
     return jsonify(todo_peli)
 
 
 
-@app.route("/frases_lan/<movies>") 
+@app.route("/frases_lan/<movie>") 
 def lasfrases_idioma(movie):
     lan = request.args.get("idioma")
     ran = sqt.traduccion(lan, movie)
@@ -52,11 +52,26 @@ def lasfrases_idioma(movie):
 
 @app.route("/nuevafrase", methods=["POST"])
 def insertafrase():
-    pelicula = request.form.get("movie")
-    contexto = request.form.get("context")
     frase = request.form.get("phrases")
-    return sqt.nuevafrase(pelicula, contexto, frase)
+    contexto = request.form.get("context")
+    pelicula = request.form.get("movie")
+    return sqt.nuevafrase(frase, contexto, pelicula)
 
+
+@app.route("/nuevamovie", methods=["POST"])
+def meterpeli():
+    movie_name = request.form.get("movie_name")
+    return sqt.nuevapeli(movie_name)
+
+
+
+@app.route("/sentimientos/<movie>") 
+def sentimientos(movie):
+    df= sqt.analisis_sentimientos(movie)
+    df["phrases_token"] = df["phrases_name"].apply(sqt.tokenizer)
+    df["resultado"] = df["phrases_token"].apply(sqt.sentiment)
+    print (df.resultado)
+    return str(df.resultado.mean())
 
 
 

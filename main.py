@@ -10,29 +10,34 @@ def dame_movies():
     return jsonify(movies)
 
 
-@app.route("/phrases") #endpoints para conseguir el nombre de las películas
+@app.route("/phrases") #endpoints para conseguir las frases de las películas
 def dame_phrases():
-    phrases = sqt.frases() #función de sql_tools para la query
+    phrases = sqt.frases() 
     return jsonify(phrases)
 
 
-@app.route("/context") #endpoints para conseguir el nombre de las películas
+@app.route("/context") #endpoints para conseguir los contextos de las películas
 def dame_context():
-    context = sqt.contexto() #función de sql_tools para la query
+    context = sqt.contexto() 
     return jsonify(context)
 
 
 
-
-@app.route("/phrases/<name>")
+@app.route("/phrases/<name>") #endpoints para conseguir las frases de películas concretas que yo le pida
 def frases(name):
-    idioma = request.args.get("idioma")
-    frasecitas = sqt.lasfrases(name, idioma)
-    return jsonify(frasecitas)
+    frase_peli = sqt.lasfrases(name)
+    return jsonify(frase_peli)
 
 
+@app.route("/context/<name>") #endpoints para conseguir los contextos de películas concretas que yo le pida
+def contexto(name):
+    contexto_peli = sqt.loscontextos(name)
+    return jsonify(contexto_peli)
 
-
+@app.route("/completo/<movie>") #endpoints para conseguir los contextos de películas concretas que yo le pida
+def complet(movie):
+    todo_peli = sqt.completo(movie)
+    return jsonify(todo_peli)
 
 
 app.run(debug=True) #runnea todo el rato

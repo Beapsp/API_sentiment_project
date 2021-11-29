@@ -14,6 +14,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema schema_movies
 -- -----------------------------------------------------
+DROP SCHEMA IF EXISTS `schema_movies`;
 CREATE SCHEMA IF NOT EXISTS `schema_movies` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 USE `schema_movies` ;
 
@@ -25,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `schema_movies`.`Movie` (
   `movie_name` VARCHAR(200) NULL DEFAULT NULL,
   PRIMARY KEY (`IDMovie`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 89
+AUTO_INCREMENT = 0
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

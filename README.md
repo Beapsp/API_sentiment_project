@@ -6,7 +6,7 @@ El objectivo de este proyecto es crear un API que me permita obtener informació
 
 ## EJECUCIÓN:
 En primer lugar importo el csv con la información de películas, y limpio el dataframe para poder insertar los datos en MySQL. La estructura de mis datos en las tablas de la base de datos es la siguiente:
-![imagen](diagrama.jpg)
+![imagen](https://github.com/Beapsp/Proyecto_crear_API/blob/main/diagrama.JPG)
 A partir de estos datos voy a crear los endpoints de la API tanto para silicitar información como para insertar.
 
 ## FUNCIONAMIENTO API:

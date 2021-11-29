@@ -1,6 +1,9 @@
 from config.configuration import engine
 import pandas as pd
 from textblob import TextBlob
+from googletrans import Translator
+
+
 
 def peliculas():
     query = list(engine.execute("SELECT distinct(movie_name) FROM schema_movies.movie;"))
@@ -44,7 +47,7 @@ def loscontextos(contexto):
 
 
 def completo(todo):
-#me convierte en df la tabla de SQL, porque estoy metiendo los dos elementos en el SELECT
+
     query = pd.read_sql_query(f"""
     SELECT context.context_name, movie.movie_name, phrases.phrases_name
     FROM phrases
@@ -58,33 +61,37 @@ def completo(todo):
 
 
 
-
-def lasfrases(personaje,lan):
-    query = f"""
-    SELECT dialogue 
-    FROM HP.frases 
-    WHERE character_name = '{personaje}';
-    """
-
-    eldata = pd.read_sql_query(query,engine)
-    
-    if lan == "es":
-        eldata["es"] = eldata.dialogue.apply(traduce)
-        eldata.drop(columns="dialogue", inplace=True)
-        return eldata.to_json(orient="records")
-    elif lan == "en":
-        return eldata.to_json(orient="records")
-    
+def traduccion(lang, movie):
+    trans = Translator()
+    if lang == "en":
+        return lasfrases(movie)
+    elif lang == "es":
+        notraduci = lasfrases(movie)
+        traducido = trans.translate(lasfrases(movie), dest="en").text
+        return f" Traducción: {traducido}"
     else:
-        return eldata.to_json(orient="records")
+        return lasfrases(movie)
 
 
 
-    #eldata = pd.read_sql_query(query,engine) 
-    if lan == "en":
-        eldata["en"] = eldata.phrases_name.apply(traduce)
-        eldata.drop(columns="phrases_name", inplace=True)
-        return eldata.to_json(orient="records") #ME SALDRÁ LISTA DE DICCIONARIOS, EL NOMBRE DE LA COLUMNA ES LA KEY Y LO DE DENTRO ES ELVALUE.
+def nuevafrase(movie, context, phrases):
+
+    engine.execute(f"""
+    INSERT INTO phrases (Movie_IDMovie, Context_IDContext, phrases_name)
+    VALUES ({movie}, '{context}', '{phrases}');
+    """)
     
+    return f"Se ha introducido correctamente: {movie} {context} {phrases}"
+
+    
+
+    #def random_aut_gen_2(lang, genero, autor):
+    trans = Translator()
+    if lang == "en":
+        return random_aut_gen(genero, autor)
+    elif lang == "es":
+        sintraducir = random_aut_gen(genero, autor)
+        traducido = trans.translate(random_aut_gen(genero,autor), dest="es").text
+        return f"Traducción: {traducido}"
     else:
-        return eldata.to_json(orient="records")
+        return random_aut_gen(genero, autor)

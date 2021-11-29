@@ -40,4 +40,24 @@ def complet(movie):
     return jsonify(todo_peli)
 
 
+
+@app.route("/frases_lan/<movies>") 
+def lasfrases_idioma(movie):
+    lan = request.args.get("idioma")
+    ran = sqt.traduccion(lan, movie)
+    return jsonify(ran)
+
+
+
+
+@app.route("/nuevafrase", methods=["POST"])
+def insertafrase():
+    pelicula = request.form.get("movie")
+    contexto = request.form.get("context")
+    frase = request.form.get("phrases")
+    return sqt.nuevafrase(pelicula, contexto, frase)
+
+
+
+
 app.run(debug=True) #runnea todo el rato
